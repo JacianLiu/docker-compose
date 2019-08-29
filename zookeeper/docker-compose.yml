@@ -1,66 +1,78 @@
+# 创建网络： docker network create --driver bridge --subnet 172.69.0.0/25 --gateway 172.69.0.1  kafka_zoo
 version: '2'
 services:
   zoo1:
-    image: zookeeper:3.4 # 镜像名称
-    restart: always # 当发生错误时自动重启
+    image: wurstmeister/zookeeper
+    restart: always
     hostname: zoo1
     container_name: zoo1
-    privileged: true
-    ports: # 端口
-      - 2181:2181
-    volumes: # 挂载数据卷
-      - ./zoo1/data:/data
-      - ./zoo1/datalog:/datalog 
+    ports:
+      - "2181:2181"
+    volumes:
+      - "/Users/WuliGit/Documents/MySoft/docker-compose/docker/volume/zookeeper/zoo1/data:/data" # “:”前改成自己的目录
+      - "/Users/WuliGit/Documents/MySoft/docker-compose/docker/volume/zookeeper/zoo1/datalog:/datalog" # “:”前改成自己的目录
     environment:
-      TZ: Asia/Shanghai
-      ZOO_MY_ID: 1 # 节点ID
-      ZOO_PORT: 2181 # zookeeper端口号
-      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888 # zookeeper节点列表
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
     networks:
       default:
-        ipv4_address: 172.23.0.11
-
+        ipv4_address: 172.69.0.21
   zoo2:
-    image: zookeeper:3.4
+    image: wurstmeister/zookeeper
     restart: always
     hostname: zoo2
     container_name: zoo2
-    privileged: true
     ports:
-      - 2182:2181
+      - "2182:2181"
     volumes:
-      - ./zoo2/data:/data
-      - ./zoo2/datalog:/datalog
+      - "/Users/WuliGit/docker/volume/zookeeper/zoo2/data:/data"
+      - "/Users/WuliGit/docker/volume/zookeeper/zoo2/datalog:/datalog"
     environment:
-      TZ: Asia/Shanghai
       ZOO_MY_ID: 2
-      ZOO_PORT: 2181
       ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
     networks:
       default:
-        ipv4_address: 172.23.0.12
-
+        ipv4_address: 172.69.0.22
   zoo3:
-    image: zookeeper:3.4
+    image: wurstmeister/zookeeper
     restart: always
     hostname: zoo3
     container_name: zoo3
-    privileged: true
     ports:
-      - 2183:2181
+      - "2183:2181"
     volumes:
-      - ./zoo3/data:/data
-      - ./zoo3/datalog:/datalog
+      - "/Users/WuliGit/docker/volume/zookeeper/zoo3/data:/data"
+      - "/Users/WuliGit/docker/volume/zookeeper/zoo3/datalog:/datalog"
     environment:
-      TZ: Asia/Shanghai
       ZOO_MY_ID: 3
-      ZOO_PORT: 2181
       ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
     networks:
       default:
-        ipv4_address: 172.23.0.13
-
+        ipv4_address: 172.69.0.23
+  kafka-manager:
+    image: sheepkiller/kafka-manager
+    restart: always
+    container_name: kafa-manager
+    hostname: kafka-manager
+    ports:
+      - "9002:9000"
+    links:            # 连接本compose文件创建的container
+      - broker1
+      - broker2
+      - broker3
+    external_links:   # 连接本compose文件以外的container
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_BROKERS: broker1:9091,broker2:9092,broker3:9093
+      APPLICATION_SECRET: letmein
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+    networks:
+      default:
+        ipv4_address: 172.69.0.10
 networks:
   default:
     external:
-      name: zoo_kafka
+      name: kafka_zoo
