@@ -79,6 +79,29 @@ services:
     networks:
       default:
         ipv4_address: 172.69.0.13
+  kafka-manager:
+    image: sheepkiller/kafka-manager
+    restart: always
+    container_name: kafa-manager
+    hostname: kafka-manager
+    ports:
+      - "9002:9000"
+    links:            # 连接本compose文件创建的container
+      - broker1
+      - broker2
+      - broker3
+    external_links:   # 连接本compose文件以外的container
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_BROKERS: broker1:9091,broker2:9092,broker3:9093
+      APPLICATION_SECRET: letmein
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+    networks:
+      default:
+        ipv4_address: 172.69.0.10
 networks:
   default:
     external:
