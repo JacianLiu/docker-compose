@@ -4,13 +4,13 @@
 
 该脚本使用的
 
+> 修改了端口号；在使用过程中出现了只能连接上一个节点的问题。
+
 `Kafka`镜像为：**wurstmeister/kafka**
 
 `Kafka-manager`镜像为：**sheepkiller/kafka-manager**
 
 1. 安装 `docker-compose`
-
-
 
    ```
    # 获取脚本
@@ -28,7 +28,7 @@
 3. 新建 Docker 网络
 
 ```
-docker network create zoo_kafka
+docker network create --driver bridge --subnet 172.69.0.0/25 --gateway 172.69.0.1  kafka_zoo
 ```
 
 4. 执行命令 `docker-compose up -d`
