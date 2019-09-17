@@ -1,0 +1,19 @@
+version: '3'
+services:
+  db:
+    #构建mysql镜像
+    image: mysql:8.0.2
+    container_name: mysql.8.0.2 # 容器名
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root #root管理员用户密码
+      # MYSQL_USER: test   #创建test用户
+      # MYSQL_PASSWORD: test  #设置test用户的密码
+    ports:
+      - '3307:3306'  #host物理直接映射端口为6606
+    volumes:
+        #mysql数据库挂载到host物理机目录/e/docker/mysql/data/db
+      - "/Users/WuliGit/docker/volume/mysql.8.0.2"  
+        #容器的配置目录挂载到host物理机目录/e/docker/mysql/data/conf  
+      - "/Users/WuliGit/docker/volume/mysql.8.0.2/conf.d"
