@@ -1,0 +1,14 @@
+version: '3'
+services:
+  mongo-container:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=jacian
+      - MONGO_INITDB_ROOT_PASSWORD=jacian@123
+    ports:
+      - "27017:27017"
+    volumes:
+      - "/Users/WuliGit/docker/volume/mongo:/data/db"
+      - "/Users/WuliGit/docker/volume/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+    command: mongod
