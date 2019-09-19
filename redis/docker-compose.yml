@@ -1,0 +1,14 @@
+# 创建网络： docker network create --driver bridge --subnet 172.69.0.0/25 --gateway 172.69.0.1  kafka_zoo
+version: '3'
+services:
+  redis:
+    image: redis
+    restart: always
+    hostname: redis
+    container_name: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - "/Users/WuliGit/docker/volume/redis/data:/data" # “:”前改成自己的目录
+      - "/Users/WuliGit/docker/volume/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf" # “:”前改成自己的目录
